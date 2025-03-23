@@ -222,3 +222,21 @@ export const products = [
     }
 
 ]
+
+export const imageOptions = [
+    { label: 'Boy Blouse 1', value: 'p_img1' },
+    { label: 'Boy Blouse 2', value: 'p_img2' },
+    { label: 'Girl Blouse', value: 'p_img3' },
+    { label: 'Man Blouse 1', value: 'p_img4' },
+    { label: 'Man Shirt', value: 'p_img5' },
+    { label: 'Man Jacket', value: 'p_img6' },
+    { label: 'Man Jeans 1', value: 'p_img7' },
+    { label: 'Man Jeans 2', value: 'p_img8' },
+    { label: 'Man Vest', value: 'p_img9' },
+    { label: 'Woman Blouse 1', value: 'p_img10' },
+    { label: 'Woman Blouse 2', value: 'p_img11' },
+    { label: 'Woman Jacket', value: 'p_img12' },
+    { label: 'Woman Jacket 1', value: 'p_img13' },
+    { label: 'Woman Jeans 1', value: 'p_img14' },
+    { label: 'Woman Jeans 2', value: 'p_img15' },
+];
