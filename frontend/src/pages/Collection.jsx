@@ -12,6 +12,17 @@ const Collection = () => {
     const [type, setType] = useState([]);
     const [sortType, setSortType] = useState('relevance');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+
+    const totalPages = Math.ceil(filterProducts.length / itemsPerPage);
+
+    const paginatedProducts = filterProducts.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {
             setCategory(prev => prev.filter(item => item !== e.target.value));
@@ -63,8 +74,19 @@ const Collection = () => {
     }, [category, type, search, showSearch])
 
     useEffect(() => {
+        setCurrentPage(1);
+    }, [category, type, search, showSearch]);
+
+    useEffect(() => {
         sortProducts();
     }, [sortType])
+
+    const prices = filterProducts.map(p => p.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const medianPrice = prices.length
+        ? prices.slice().sort((a, b) => a - b)[Math.floor(prices.length / 2)]
+        : 0;
 
 
     return (
@@ -122,11 +144,55 @@ const Collection = () => {
                 </div>
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-4 gap-y-6'>
                     {
-                        filterProducts.map((item, index) => (
-                            <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-                        ))
+                        paginatedProducts.map((item, index) => {
+                            let priceClass = 'text-gray-800'; // default
+
+                            if (item.price === minPrice) priceClass = 'text-green-600';
+                            else if (item.price === maxPrice) priceClass = 'text-red-600';
+                            else if (item.price === medianPrice) priceClass = 'text-yellow-600';
+
+                            return (
+                                <ProductItem
+                                    key={index}
+                                    id={item._id}
+                                    image={item.image}
+                                    name={item.name}
+                                    price={item.price}
+                                    priceClass={priceClass}
+                                />
+                            );
+                        })
                     }
                 </div>
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-6 gap-2 flex-wrap">
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 border rounded disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentPage(i + 1)}
+                                className={`px-3 py-1 border rounded ${currentPage === i + 1 ? 'bg-black text-white' : 'bg-white'}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 border rounded disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -23,6 +23,7 @@ import p_img12 from './Woman_Jacket.png'
 import p_img13 from './Woman_Jacket1.png'
 import p_img14 from './Woman_Jeans1.png'
 import p_img15 from './Woman_Jeans2.png'
+import p_img16 from './Woman_Coat.png'
 import heroimg from './front_view.png'
 
 export const assets = {
@@ -51,6 +52,7 @@ export const assets = {
     p_img13,
     p_img14,
     p_img15,
+    p_img16,
     heroimg
 }
 
@@ -239,4 +241,5 @@ export const imageOptions = [
     { label: 'Woman Jacket 1', value: 'p_img13' },
     { label: 'Woman Jeans 1', value: 'p_img14' },
     { label: 'Woman Jeans 2', value: 'p_img15' },
+    { label: 'Woman Coat', value: 'p_img16' }
 ];

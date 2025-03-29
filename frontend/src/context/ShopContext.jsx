@@ -1,29 +1,18 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { products as initialProducts, assets } from '../assets/assets';
+import React, { createContext, useState } from 'react';
+import { products as initialProducts } from '../assets/assets';
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(
+        initialProducts.map(product => ({
+            ...product,
+            image: Array.isArray(product.image) ? product.image[0] : product.image
+        }))
+    );
+
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
-
-    useEffect(() => {
-        const saved = localStorage.getItem('products');
-        if (saved) {
-            setProducts(JSON.parse(saved));
-        } else {
-            const withKeys = initialProducts.map(product => ({
-                ...product,
-                image: Array.isArray(product.image) ? product.image[0] : product.image
-            }));
-            setProducts(withKeys);
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('products', JSON.stringify(products));
-    }, [products]);
 
     const addProduct = (newProduct) => {
         setProducts(prev => [...prev, { ...newProduct, _id: Date.now() }]);
