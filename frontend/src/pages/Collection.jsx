@@ -142,7 +142,7 @@ const Collection = () => {
                         <option value="high-low">Sort by High to Low</option>
                     </select>
                 </div>
-                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-4 gap-y-6'>
+                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-y-6'>
                     {
                         paginatedProducts.map((item, index) => {
                             let priceClass = 'text-gray-800'; // default

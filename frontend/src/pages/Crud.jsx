@@ -1,7 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../context/ShopContext';
 import { assets, imageOptions } from '../assets/assets';
 import toast from 'react-hot-toast';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
+} from 'recharts';
 
 const categories = ['Men', 'Women', 'Kids'];
 const subCategories = ['Topwear', 'Bottomwear', 'Outerwear'];
@@ -19,6 +22,32 @@ const Crud = () => {
         sizes: [],
         bestseller: false
     });
+    const [categoryData, setCategoryData] = useState([]);
+    const [subCategoryData, setSubCategoryData] = useState([]);
+    const [priceData, setPriceData] = useState([]);
+
+    useEffect(() => {
+        const categoryCount = {};
+        const subCategoryCount = {};
+        const priceBuckets = {
+            '0–50': 0,
+            '51–100': 0,
+            '101+': 0
+        };
+
+        products.forEach(p => {
+            categoryCount[p.category] = (categoryCount[p.category] || 0) + 1;
+            subCategoryCount[p.subCategory] = (subCategoryCount[p.subCategory] || 0) + 1;
+
+            if (p.price <= 50) priceBuckets['0–50']++;
+            else if (p.price <= 100) priceBuckets['51–100']++;
+            else priceBuckets['101+']++;
+        });
+
+        setCategoryData(Object.entries(categoryCount).map(([name, value]) => ({ name, value })));
+        setSubCategoryData(Object.entries(subCategoryCount).map(([name, value]) => ({ name, value })));
+        setPriceData(Object.entries(priceBuckets).map(([name, value]) => ({ name, value })));
+    }, [products]);
 
     const [editingId, setEditingId] = useState(null);
     const [editData, setEditData] = useState({});
@@ -73,8 +102,55 @@ const Crud = () => {
         toast.success('Product updated successfully');
     };
 
+    const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
+
     return (
         <div className='p-6 max-w-4xl mx-auto'>
+            <h3 className="text-xl font-bold mb-2">Live Product Stats</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                        <Pie
+                            data={categoryData}
+                            dataKey="value"
+                            nameKey="name"
+                            outerRadius={80}
+                            label
+                        >
+                            {categoryData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={subCategoryData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis allowDecimals={false} />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#82ca9d" name="Subcategory Count" label />
+                    </BarChart>
+                </ResponsiveContainer>
+
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={priceData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" label={{ value: 'Price Range', position: 'insideBottom', offset: -5, dy: -2 }} />
+                        <YAxis
+                            allowDecimals={false}
+                            label={{ value: '# of Products', angle: -90, position: 'insideLeft' }}
+                        />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#ffc658" name="Products per Price Range" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+
             <h2 className='text-2xl font-bold mb-4'>Add Product</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6'>
                 <select value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })} className='border p-2'>
