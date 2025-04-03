@@ -1,5 +1,16 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { addProduct, updateProduct, deleteProduct } from '../assets/productOperations';
+const filterProducts = (products, selectedCategories = [], selectedSubCategories = []) => {
+    return products.filter(product => {
+        const matchesCategory =
+            selectedCategories.length === 0 || selectedCategories.includes(product.category);
+
+        const matchesSubCategory =
+            selectedSubCategories.length === 0 || selectedSubCategories.includes(product.subCategory);
+
+        return matchesCategory && matchesSubCategory;
+    });
+};
 
 describe('productOperations logic', () => {
     let products;
@@ -33,5 +44,31 @@ describe('productOperations logic', () => {
 
         expect(updated.length).toBe(1);
         expect(updated[0]._id).toBe(2);
+    });
+});
+describe('Product filtering', () => {
+    const products = [
+        { _id: 1, name: 'Shirt', category: 'Men', subCategory: 'Topwear' },
+        { _id: 2, name: 'Jeans', category: 'Men', subCategory: 'Bottomwear' },
+        { _id: 3, name: 'Dress', category: 'Women', subCategory: 'Topwear' },
+        { _id: 4, name: 'Jacket', category: 'Women', subCategory: 'Outerwear' }
+    ];
+
+    test('filters by category', () => {
+        const result = filterProducts(products, ['Women']);
+        expect(result.length).toBe(2);
+        expect(result.every(p => p.category === 'Women')).toBe(true);
+    });
+
+    test('filters by subCategory', () => {
+        const result = filterProducts(products, [], ['Topwear']);
+        expect(result.length).toBe(2);
+        expect(result.every(p => p.subCategory === 'Topwear')).toBe(true);
+    });
+
+    test('filters by category and subCategory', () => {
+        const result = filterProducts(products, ['Women'], ['Topwear']);
+        expect(result.length).toBe(1);
+        expect(result[0].name).toBe('Dress');
     });
 });
