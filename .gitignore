@@ -1,0 +1,33 @@
+# Logs
+*.log
+
+# Dependency directories
+node_modules/
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor configs
+.vscode/
+.idea/
+
+# Build and cache
+dist/
+build/
+.cache/
+
+# Images (optional)
+frontend/src/assets/*.png
+frontend/public/images/
+*.webp
+*.jpeg
+*.jpg
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.swp
