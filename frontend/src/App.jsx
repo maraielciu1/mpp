@@ -11,7 +11,7 @@ import Orders from './pages/Orders';
 
 const App = () => {
   return (
-    <div className='px-4 sm: px-[5vw] md:px-[7vw] lg:px-[9vw]'>
+    <div className='sm: px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <SearchBar />

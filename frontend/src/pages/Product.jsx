@@ -28,7 +28,7 @@ const Product = () => {
             <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
                 {/* Product image */}
                 <div className='flex-1 flex-col-reverse gap-3 sm:flex-row'>
-                    <div className='flex sm: flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm: justify-normal sm: w-[18.7%] w-full' >
+                    <div className='flex sm: flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm: w-full' >
 
                         {Array.isArray(productData.image) ? (
                             productData.image.map((item, index) => (
