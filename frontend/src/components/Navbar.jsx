@@ -23,6 +23,10 @@ const Navbar = () => {
                     <p>Crud</p>
                     <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
                 </NavLink>
+                <NavLink to='/upload' className='flex flex-col items-center gap-1'>
+                    <p>File Transfer</p>
+                    <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
+                </NavLink>
             </ul>
             <div className='flex items-center gap-6'>
                 <img onClick={() => setShowSearch(true)} src={assets.searchIcon} alt="search" className='w-5 cursor-pointer' />
@@ -53,6 +57,7 @@ const Navbar = () => {
                     <NavLink onClick={() => setVisible(false)} to='/' className='py-2 pl-6 border'>Home</NavLink>
                     <NavLink onClick={() => setVisible(false)} to='/collection' className='py-2 pl-6 border'>Collection</NavLink>
                     <NavLink onClick={() => setVisible(false)} to='/crud' className='py-2 pl-6 border'>Crud</NavLink>
+                    <NavLink onClick={() => setVisible(false)} to='/upload' className='py-2 pl-6 border'>File Transfer</NavLink>
                 </div>
             </div>
         </div>

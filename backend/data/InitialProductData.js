@@ -164,6 +164,156 @@ const baseProducts = [
         sizes: ["S", "M", "L", "XL"],
         bestseller: true
     },
+    {
+        _id: 16, name: "Men Item 16", description: "A sample outerwear for men category.",
+        price: 42, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 17, name: "Kids Item 17", description: "A sample bottomwear for kids category.",
+        price: 71, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 18, name: "Men Item 18", description: "A sample bottomwear for men category.",
+        price: 68, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 19, name: "Men Item 19", description: "A sample bottomwear for men category.",
+        price: 67, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 20, name: "Women Item 20", description: "A sample bottomwear for women category.",
+        price: 66, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 21, name: "Kids Item 21", description: "A sample bottomwear for kids category.",
+        price: 70, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 22, name: "Women Item 22", description: "A sample bottomwear for women category.",
+        price: 43, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 23, name: "Kids Item 23", description: "A sample topwear for kids category.",
+        price: 108, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 24, name: "Kids Item 24", description: "A sample topwear for kids category.",
+        price: 110, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 25, name: "Kids Item 25", description: "A sample topwear for kids category.",
+        price: 42, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 26, name: "Men Item 26", description: "A sample outerwear for men category.",
+        price: 78, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 27, name: "Kids Item 27", description: "A sample bottomwear for kids category.",
+        price: 94, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 28, name: "Women Item 28", description: "A sample bottomwear for women category.",
+        price: 63, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 29, name: "Men Item 29", description: "A sample topwear for men category.",
+        price: 101, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 30, name: "Kids Item 30", description: "A sample outerwear for kids category.",
+        price: 93, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 31, name: "Women Item 31", description: "A sample bottomwear for women category.",
+        price: 92, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 32, name: "Men Item 32", description: "A sample topwear for men category.",
+        price: 119, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 33, name: "Men Item 33", description: "A sample outerwear for men category.",
+        price: 84, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 34, name: "Men Item 34", description: "A sample bottomwear for men category.",
+        price: 62, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 35, name: "Kids Item 35", description: "A sample outerwear for kids category.",
+        price: 116, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 36, name: "Kids Item 36", description: "A sample bottomwear for kids category.",
+        price: 80, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 37, name: "Women Item 37", description: "A sample bottomwear for women category.",
+        price: 109, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 38, name: "Kids Item 38", description: "A sample bottomwear for kids category.",
+        price: 109, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 39, name: "Kids Item 39", description: "A sample outerwear for kids category.",
+        price: 63, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 40, name: "Men Item 40", description: "A sample outerwear for men category.",
+        price: 96, image: ["Boy_Blouse1.png"], category: "Men", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 41, name: "Women Item 41", description: "A sample outerwear for women category.",
+        price: 65, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 42, name: "Women Item 42", description: "A sample bottomwear for women category.",
+        price: 60, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
+    {
+        _id: 43, name: "Kids Item 43", description: "A sample topwear for kids category.",
+        price: 47, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Topwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 44, name: "Kids Item 44", description: "A sample outerwear for kids category.",
+        price: 45, image: ["Boy_Blouse1.png"], category: "Kids", subCategory: "Outerwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: true
+    },
+    {
+        _id: 45, name: "Women Item 45", description: "A sample bottomwear for women category.",
+        price: 78, image: ["Boy_Blouse1.png"], category: "Women", subCategory: "Bottomwear",
+        sizes: ["S", "M", "L", "XL"], bestseller: false
+    },
 ];
 // const moreProducts = [];
 

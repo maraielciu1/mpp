@@ -1,13 +1,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
-import Collection from './pages/collection';
-import Crud from './pages/crud';
+import Collection from './pages/Collection';
+import Crud from './pages/Crud';
 import Navbar from './components/Navbar';
 import SearchBar from './components/SearchBar';
 import { Toaster } from 'react-hot-toast';
 import Product from './pages/Product';
 import Orders from './pages/Orders';
+import FileTransfer from './pages/FileTransfer';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path='/place-order' element={<PlaceOrder />} />
         <Route path='/orders' element={<Orders />} /> */}
         <Route path='/crud' element={<Crud />} />
+        <Route path='/upload' element={<FileTransfer />} />
       </Routes>
     </div>
   );
