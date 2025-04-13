@@ -5,45 +5,37 @@ import Title from '../components/Title';
 import ProductItem from '../components/ProductItem';
 
 const Collection = () => {
-    const { products, search, showSearch } = useContext(ShopContext);
+    const { products, search, showSearch, fetchProducts } = useContext(ShopContext);
     const [showFilter, setShowFilter] = useState(false);
     const [filterProducts, setFilterProducts] = useState([]);
     const [category, setCategory] = useState([]);
     const [type, setType] = useState([]);
     const [sortType, setSortType] = useState('relevance');
-
+    const [itemsPerPage, setItemsPerPage] = useState(0); // default to All
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4;
 
-    const totalPages = Math.ceil(filterProducts.length / itemsPerPage);
-
-    const paginatedProducts = filterProducts.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {
             setCategory(prev => prev.filter(item => item !== e.target.value));
-
-        }
-        else {
+        } else {
             setCategory(prev => [...prev, e.target.value]);
         }
-    }
+    };
 
     const toggleType = (e) => {
         if (type.includes(e.target.value)) {
             setType(prev => prev.filter(item => item !== e.target.value));
-        }
-        else {
+        } else {
             setType(prev => [...prev, e.target.value]);
         }
-    }
+    };
 
     const applyFilter = () => {
-        let tempProducts = products.slice();
+        let tempProducts = [...products];
         if (showSearch && search) {
             tempProducts = tempProducts.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
         }
@@ -54,24 +46,21 @@ const Collection = () => {
             tempProducts = tempProducts.filter(item => type.includes(item.subCategory));
         }
         setFilterProducts(tempProducts);
-    }
+    };
 
     const sortProducts = () => {
-        let tempProducts = filterProducts.slice();
+        let tempProducts = [...filterProducts];
         if (sortType === 'low-high') {
-            setFilterProducts(tempProducts.sort((a, b) => (a.price - b.price)));
+            tempProducts.sort((a, b) => a.price - b.price);
+        } else if (sortType === 'high-low') {
+            tempProducts.sort((a, b) => b.price - a.price);
         }
-        else if (sortType === 'high-low') {
-            setFilterProducts(tempProducts.sort((a, b) => (b.price - a.price)));
-        }
-        else {
-            applyFilter();
-        }
-    }
+        setFilterProducts(tempProducts);
+    };
 
     useEffect(() => {
         applyFilter();
-    }, [category, type, search, showSearch])
+    }, [products, category, type, search, showSearch]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -79,7 +68,14 @@ const Collection = () => {
 
     useEffect(() => {
         sortProducts();
-    }, [sortType])
+    }, [sortType]);
+
+    const totalPages = Math.ceil(filterProducts.length / (itemsPerPage || filterProducts.length || 1));
+
+    const paginatedProducts = itemsPerPage === 0 ? filterProducts : filterProducts.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const prices = filterProducts.map(p => p.price);
     const minPrice = Math.min(...prices);
@@ -87,7 +83,6 @@ const Collection = () => {
     const medianPrice = prices.length
         ? prices.slice().sort((a, b) => a - b)[Math.floor(prices.length / 2)]
         : 0;
-
 
     return (
         <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gray-200'>
@@ -97,9 +92,7 @@ const Collection = () => {
                     FILTERS
                 </p>
                 <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-                    <p className='mb-3 text-sm font-medium'>
-                        CATEGORIES
-                    </p>
+                    <p className='mb-3 text-sm font-medium'>CATEGORIES</p>
                     <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
                         <p className='flex gap-2'>
                             <input className='w-3' type="checkbox" value={'Men'} onChange={toggleCategory} />Men
@@ -112,11 +105,8 @@ const Collection = () => {
                         </p>
                     </div>
                 </div>
-                {/* subfilters */}
                 <div className={`border border-gray-300 pl-5 py-3 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
-                    <p className='mb-3 text-sm font-medium'>
-                        TYPE
-                    </p>
+                    <p className='mb-3 text-sm font-medium'>TYPE</p>
                     <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
                         <p className='flex gap-2'>
                             <input className='w-3' type="checkbox" value={'Topwear'} onChange={toggleType} />Topwear
@@ -129,13 +119,19 @@ const Collection = () => {
                         </p>
                     </div>
                 </div>
+                <div className='mt-6'>
+                    <label className='text-sm font-medium'>Items per page:</label>
+                    <select value={itemsPerPage} onChange={e => setItemsPerPage(Number(e.target.value))} className='border p-1 mt-1 block'>
+                        <option value={0}>All</option>
+                        <option value={4}>4</option>
+                    </select>
+                </div>
             </div>
 
             {/* product list */}
             <div className='flex-1'>
                 <div className='flex justify-between text-base sm:text-2xl mb-4'>
                     <Title text1={'All'} text2={'Collections'} />
-                    {/* sorting */}
                     <select onChange={(e) => setSortType(e.target.value)} className='border border-gray-300 px-3 py-1 rounded-sm text-sm font-light text-gray-700'>
                         <option value="relevance">Sort by relevance</option>
                         <option value="low-high">Sort by Low to High</option>
@@ -145,7 +141,7 @@ const Collection = () => {
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-y-6'>
                     {
                         paginatedProducts.map((item, index) => {
-                            let priceClass = 'text-gray-800'; // default
+                            let priceClass = 'text-gray-800';
 
                             if (item.price === minPrice) priceClass = 'text-green-600';
                             else if (item.price === maxPrice) priceClass = 'text-red-600';
@@ -153,7 +149,7 @@ const Collection = () => {
 
                             return (
                                 <ProductItem
-                                    key={index}
+                                    key={item._id || index}
                                     id={item._id}
                                     image={item.image}
                                     name={item.name}
@@ -164,7 +160,7 @@ const Collection = () => {
                         })
                     }
                 </div>
-                {totalPages > 1 && (
+                {totalPages > 1 && itemsPerPage !== 0 && (
                     <div className="flex justify-center mt-6 gap-2 flex-wrap">
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -196,6 +192,6 @@ const Collection = () => {
             </div>
         </div>
     )
-}
+};
 
-export default Collection
+export default Collection;

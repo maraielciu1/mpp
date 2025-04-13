@@ -11,7 +11,7 @@ const subCategories = ['Topwear', 'Bottomwear', 'Outerwear'];
 const availableSizes = ['XS', 'S', 'M', 'L', 'XL'];
 
 const Crud = () => {
-    const { products, addProduct, updateProduct, deleteProduct } = useContext(ShopContext);
+    const { products, addProduct, updateProduct, deleteProduct, status } = useContext(ShopContext);
     const [newProduct, setNewProduct] = useState({
         image: '',
         name: '',
@@ -25,6 +25,20 @@ const Crud = () => {
     const [categoryData, setCategoryData] = useState([]);
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [priceData, setPriceData] = useState([]);
+
+    const statusColor = {
+        online: 'bg-green-200 text-green-800',
+        offline: 'bg-yellow-200 text-yellow-800',
+        'server-down': 'bg-red-200 text-red-800',
+        checking: 'bg-gray-200 text-gray-800'
+    };
+
+    const statusText = {
+        online: '🟢 Online',
+        offline: '🟡 Offline (changes will sync later)',
+        'server-down': '🔴 Server Down',
+        checking: '⚪ Checking server...'
+    };
 
     useEffect(() => {
         const categoryCount = {};
@@ -72,6 +86,10 @@ const Crud = () => {
     };
 
     const handleAdd = () => {
+        console.log("Sending to backend:", {
+            ...newProduct,
+            image: [newProduct.image.split('/').pop()]
+        });
         const validation = validate(newProduct);
         if (Object.keys(validation).length > 0) return setErrors(validation);
         addProduct({ ...newProduct, image: assets[newProduct.image] });
@@ -95,7 +113,12 @@ const Crud = () => {
     const handleUpdate = () => {
         const validation = validate(editData);
         if (Object.keys(validation).length > 0) return setErrors(validation);
-        updateProduct(editingId, editData);
+        updateProduct(editingId, {
+            ...editData,
+            image: Array.isArray(editData.image)
+                ? editData.image.map(img => img.split('/').pop())
+                : [editData.image.split('/').pop()]
+        });
         setEditingId(null);
         setEditData({});
         setErrors({});
@@ -106,6 +129,9 @@ const Crud = () => {
 
     return (
         <div className='p-6 max-w-4xl mx-auto'>
+            <div className={`p-2 mb-4 rounded text-center font-medium ${statusColor[status]}`}>
+                {statusText[status]}
+            </div>
             <h3 className="text-xl font-bold mb-2">Live Product Stats</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
