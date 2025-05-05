@@ -7,45 +7,34 @@ import axios from 'axios';
 const Collection = () => {
     const { search, showSearch } = useContext(ShopContext);
     const [products, setProducts] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
 
     const [showFilter, setShowFilter] = useState(false);
     const [category, setCategory] = useState([]);
     const [type, setType] = useState([]);
     const [sortType, setSortType] = useState('relevance');
 
-    const loadMoreProducts = async () => {
-        if (!hasMore || isLoading) return;
-        setIsLoading(true);
+    const fetchAllProducts = async () => {
         try {
-            const res = await axios.get(`http://localhost:4000/products?page=${page}&limit=20`);
-            const newData = res.data.map(p => ({ ...p, image: Array.isArray(p.image) ? p.image : [p.image] }));
-            setProducts(prev => [...prev, ...newData]);
-            setHasMore(res.data.length > 0);
-            setPage(prev => prev + 1);
+            const params = {};
+            if (category.length === 1) params.category = category[0]; // optional: only send if exactly one selected
+            if (type.length === 1) params.sub_category = type[0]; // same here
+            if (sortType === 'low-high') params.sort = 'price_asc';
+            else if (sortType === 'high-low') params.sort = 'price_desc';
+
+            const res = await axios.get('http://localhost:4000/products', { params });
+            const allData = res.data.map(p => ({
+                ...p,
+                image: Array.isArray(p.image) ? p.image : [p.image]
+            }));
+            setProducts(allData);
         } catch (err) {
             console.error('Failed to load products', err);
-        } finally {
-            setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        loadMoreProducts();
+        fetchAllProducts();
     }, []);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
-            if (nearBottom) {
-                loadMoreProducts();
-            }
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [hasMore, page]);
 
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {
@@ -67,7 +56,7 @@ const Collection = () => {
         return (
             (!showSearch || !search || item.name.toLowerCase().includes(search.toLowerCase())) &&
             (category.length === 0 || category.includes(item.category)) &&
-            (type.length === 0 || type.includes(item.subCategory))
+            (type.length === 0 || type.includes(item.sub_category))
         );
     });
 
@@ -126,11 +115,13 @@ const Collection = () => {
                         else if (item.price === maxPrice) priceClass = 'text-red-600';
                         else if (item.price === medianPrice) priceClass = 'text-yellow-600';
 
+                        const resolvedImage = Array.isArray(item.image) ? item.image[0] : item.image;
+
                         return (
                             <ProductItem
-                                key={item._id || index}
-                                id={item._id}
-                                image={item.image}
+                                key={item.id || index}
+                                id={item.id}
+                                image={resolvedImage}
                                 name={item.name}
                                 price={item.price}
                                 priceClass={priceClass}
@@ -138,11 +129,6 @@ const Collection = () => {
                         );
                     })}
                 </div>
-                {isLoading && (
-                    <div className='flex justify-center items-center py-8'>
-                        <div className='animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-500'></div>
-                    </div>
-                )}
             </div>
         </div>
     );

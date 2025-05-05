@@ -61,11 +61,11 @@ const ShopContextProvider = ({ children }) => {
             try {
                 const payload = {
                     ...op.data,
-                    image: extractFilename(op.data.image)
+                    image: op.data.image[0]
                 };
                 if (op.method === 'POST') {
                     const res = await axios.post('http://localhost:4000/products', payload);
-                    idMap[op.data._id] = res.data._id;
+                    idMap[op.data.id] = res.data.id;
                     setIdMap(idMap);
                 }
                 else if (op.method === 'PATCH') {
@@ -92,14 +92,20 @@ const ShopContextProvider = ({ children }) => {
         }
         try {
             const res = await axios.get('http://localhost:4000/products');
-            const normalized = res.data.map(normalizeProduct);
+            const normalized = res.data.map(p => ({
+                ...p,
+                subCategory: p.subCategory || p.sub_category || '',
+                image: Array.isArray(p.image) ? p.image : [p.image],
+            }));
             setProducts(normalized);
-            localStorage.setItem(cacheKey, JSON.stringify(normalized)); // cache normalized
+            localStorage.setItem(cacheKey, JSON.stringify(normalized));
         } catch {
             const cached = JSON.parse(localStorage.getItem(cacheKey) || '[]');
             setProducts(cached);
         }
     };
+
+
 
     useEffect(() => {
         const updateStatus = async () => {
@@ -122,45 +128,30 @@ const ShopContextProvider = ({ children }) => {
     }, []);
 
     const addProduct = async (product) => {
-        const fileName = extractFilename(product.image);
-        const localId = Date.now();
-        const localProduct = normalizeProduct({ ...product, image: fileName, _id: localId });
+        const newProduct = {
+            ...product,
+            image: product.image, // must be an array of URLs
+        };
 
-        if (status !== 'online') {
-            queueOperation({ method: 'POST', data: localProduct });
-            const newProducts = [...products, localProduct];
-            setProducts(newProducts);
-            localStorage.setItem(cacheKey, JSON.stringify(newProducts));
-            return;
-        }
         try {
-            const res = await axios.post('http://localhost:4000/products', { ...product, image: fileName });
-            const normalized = normalizeProduct(res.data);
-            const newProducts = [...products, normalized];
-            setProducts(newProducts);
-            localStorage.setItem(cacheKey, JSON.stringify(newProducts));
+            const res = await axios.post('http://localhost:4000/products', newProduct);
+            const updated = [...products, res.data];
+            setProducts(updated);
+            localStorage.setItem(cacheKey, JSON.stringify(updated));
         } catch (err) {
             console.error('Failed to add product', err);
         }
     };
 
-    const updateProduct = async (id, data) => {
-        const fileName = extractFilename(data.image);
-        const formatted = normalizeProduct({ ...data, image: fileName });
 
-        if (status !== 'online') {
-            queueOperation({ method: 'PATCH', id, data: formatted });
-            const updated = products.map(p =>
-                p._id === id ? normalizeProduct({ ...p, ...formatted }) : p
-            );
-            setProducts(updated);
-            localStorage.setItem(cacheKey, JSON.stringify(updated));
-            return;
-        }
+
+    const updateProduct = async (id, data) => {
         try {
-            const res = await axios.patch(`http://localhost:4000/products/${id}`, { ...data, image: fileName });
-            const normalized = normalizeProduct(res.data);
-            const updated = products.map(p => p._id === id ? normalized : p);
+            const res = await axios.patch(`http://localhost:4000/products/${id}`, {
+                ...data,
+                image: data.image, // array of URLs
+            });
+            const updated = products.map(p => (p.id === id ? res.data : p));
             setProducts(updated);
             localStorage.setItem(cacheKey, JSON.stringify(updated));
         } catch (err) {
@@ -169,24 +160,16 @@ const ShopContextProvider = ({ children }) => {
     };
 
     const deleteProduct = async (id) => {
-        if (status !== 'online') {
-            const idMap = getIdMap();
-            const realId = idMap[id] || id;
-            queueOperation({ method: 'DELETE', id: realId });
-            const filtered = products.filter(p => p._id !== id);
-            setProducts(filtered);
-            localStorage.setItem(cacheKey, JSON.stringify(filtered));
-            return;
-        }
         try {
             await axios.delete(`http://localhost:4000/products/${id}`);
-            const filtered = products.filter(p => p._id !== id);
+            const filtered = products.filter(p => p.id !== id);
             setProducts(filtered);
             localStorage.setItem(cacheKey, JSON.stringify(filtered));
         } catch (err) {
             console.error('Failed to delete product', err);
         }
     };
+
 
 
     return (

@@ -5,7 +5,8 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import productsRoute from './routes/products.js';
-import fileRoute from './routes/files.js'; // ✅ Import your file route
+import fileRoute from './routes/files.js';
+import { WebSocketServer } from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,3 +39,43 @@ app.get('/ping', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
+const wss = new WebSocketServer({ port: 8080 });
+wss.on('connection', ws => {
+    console.log('Client connected');
+});
+
+
+const broadcast = (data) => {
+    const message = JSON.stringify(data);
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(message);
+        }
+    });
+};
+
+app.get('/start-generation', (req, res) => {
+    let count = 0;
+    const interval = setInterval(() => {
+        const mock = {
+            _id: Date.now(),
+            name: `Mock Product ${count + 1}`,
+            description: 'Generated via server',
+            price: Math.floor(Math.random() * 150) + 10,
+            category: ['Men', 'Women', 'Kids'][Math.floor(Math.random() * 3)],
+            subCategory: ['Topwear', 'Bottomwear', 'Outerwear'][Math.floor(Math.random() * 3)],
+            sizes: ['S', 'M', 'L'],
+            image: ['http://localhost:4000/images/Boy_Blouse1.png'],
+            bestseller: false
+        };
+
+        broadcast({ type: 'new_product', payload: mock });
+
+        if (++count >= 10) clearInterval(interval);
+    }, 2000);
+
+    res.send('Generation started');
+});
+
+export default app;

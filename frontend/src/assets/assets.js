@@ -7,6 +7,8 @@ import profileIcon from './profileIcon.png'
 import searchIcon from './searchIcon.png'
 import statsIcon from './statsIcon.png'
 import userIcon from './userIcon.png'
+import starIcon from './starIcon.png'
+import fullStarIcon from './fullStartIcon.png'
 import logo from './MyClosetLogo.png'
 import p_img1 from './Boy_Blouse1.png'
 import p_img2 from './Boy_Blouse2.png'
@@ -35,7 +37,9 @@ export const assets = {
     profileIcon,
     searchIcon,
     statsIcon,
+    starIcon,
     userIcon,
+    fullStarIcon,
     logo,
     p_img1,
     p_img2,

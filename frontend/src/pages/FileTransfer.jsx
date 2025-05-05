@@ -53,7 +53,7 @@ const FileTransfer = () => {
         <div className='p-8'>
             <h1 className='text-3xl font-bold mb-4'>Product Suggestions</h1>
             <p className='text-gray-700 mb-6 max-w-2xl'>
-                This blog allows you to share product ideas and suggestions by uploading files (including large ones like videos or PDFs).
+                This blog allows you to share product ideas and suggestions by uploading files.
                 You can also see what others have suggested by browsing and downloading their uploaded files below.
             </p>
 
