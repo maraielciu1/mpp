@@ -7,6 +7,10 @@ import { fileURLToPath } from 'url';
 import productsRoute from './routes/products.js';
 import fileRoute from './routes/files.js';
 import { WebSocketServer } from 'ws';
+import statsRoutes from './routes/stats.js';
+import authRoute from './routes/auth.js';
+import adminRoute from './routes/admin.js';
+import offersRoute from './routes/offers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +29,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/products', productsRoute);
 app.use('/api/files', fileRoute);
+app.use('/stats', statsRoutes);
+app.use('/auth', authRoute);
+app.use('/admin', adminRoute);
+app.use('/offers', offersRoute);
 
 // Root
 app.get('/', (req, res) => {

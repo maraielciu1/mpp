@@ -23,8 +23,14 @@ const Collection = () => {
 
             const res = await axios.get('http://localhost:4000/products', { params });
             const allData = res.data.map(p => ({
-                ...p,
-                image: Array.isArray(p.image) ? p.image : [p.image]
+                id: p.id,
+                name: p.name,
+                description: p.description,
+                price: p.price,
+                category: p.category,
+                sub_category: p.sub_category,
+                bestseller: p.bestseller,
+                image: Array.isArray(p.image) ? p.image : [p.image],
             }));
             setProducts(allData);
         } catch (err) {
@@ -34,7 +40,7 @@ const Collection = () => {
 
     useEffect(() => {
         fetchAllProducts();
-    }, []);
+    }, [category, type, sortType]);
 
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {

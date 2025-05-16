@@ -177,3 +177,43 @@ INSERT INTO offers (product_id, sender_id, amount) VALUES (6, 1, 100.00);
 INSERT INTO offers (product_id, sender_id, amount) VALUES (7, 1, 85.00);
 INSERT INTO offers (product_id, sender_id, amount) VALUES (11, 1, 55.00);
 INSERT INTO offers (product_id, sender_id, amount) VALUES (15, 1, 75.00);
+
+select * from products;
+
+SELECT current_user;
+SELECT current_database();
+
+SELECT DISTINCT sub_category FROM products;
+
+SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
+
+CREATE INDEX idx_products_user_id ON products(user_id);
+CREATE INDEX idx_products_category ON products(category);
+CREATE INDEX idx_products_sub_category ON products(sub_category);
+CREATE INDEX idx_offers_product_id ON offers(product_id);
+CREATE INDEX idx_offers_sender_id ON offers(sender_id);
+
+CREATE TABLE logs (
+                      id SERIAL PRIMARY KEY,
+                      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                      action TEXT NOT NULL CHECK (action IN ('CREATE', 'UPDATE', 'DELETE')),
+                      product_id INTEGER REFERENCES products(id),
+                      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE monitored_users (
+                                 user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                                 reason TEXT,
+                                 last_checked TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+delete from products where id>16;
+
+select count(*) from products;
+
+-- change the user_id of the products where user_id=2 to 3
+update products set user_id=3 where user_id=2;
+
+select * from products where user_id=3;
+
+ALTER TABLE offers ADD COLUMN is_accepted BOOLEAN DEFAULT FALSE;
