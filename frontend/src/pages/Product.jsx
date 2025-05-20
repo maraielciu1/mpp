@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShopContext } from '../context/ShopContext';
-import { assets } from '../assets/assets';
+import { ShopContext, BASE_URL } from '../context/ShopContext';
 import axios from 'axios';
 
 const Product = () => {
@@ -12,11 +11,13 @@ const Product = () => {
     const [offerValue, setOfferValue] = useState('');
     const [offers, setOffers] = useState([]);
     const [acceptedOfferEmail, setAcceptedOfferEmail] = useState('');
+    const [hasAcceptedOffer, setHasAcceptedOffer] = useState(false);
+
     const user = JSON.parse(localStorage.getItem('activeUser'));
 
     const fetchProductFromServer = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:4000/products/${id}`);
+            const res = await axios.get(`${BASE_URL}/products/${id}`);
             const data = res.data;
             if (data) {
                 const normalized = {
@@ -34,8 +35,9 @@ const Product = () => {
 
     const fetchOffers = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:4000/offers/${id}`);
+            const res = await axios.get(`${BASE_URL}/offers/${id}`);
             setOffers(res.data);
+            setHasAcceptedOffer(res.data.some(o => o.is_accepted));
         } catch (err) {
             console.error('Failed to fetch offers', err);
         }
@@ -61,13 +63,17 @@ const Product = () => {
 
     const handleSubmitOffer = async (e) => {
         e.preventDefault();
+        if (hasAcceptedOffer) {
+            alert('An offer has already been accepted. No more offers allowed.');
+            return;
+        }
         const amount = parseFloat(offerValue);
         if (isNaN(amount) || amount <= 0) {
             alert('Enter a valid offer amount');
             return;
         }
         try {
-            await axios.post('http://localhost:4000/offers', {
+            await axios.post(`${BASE_URL}/offers`, {
                 product_id: productData.id,
                 sender_id: user.id,
                 amount
@@ -81,7 +87,7 @@ const Product = () => {
 
     const handleAccept = async (offerId) => {
         try {
-            const res = await axios.post(`http://localhost:4000/offers/${offerId}/accept`);
+            const res = await axios.post(`${BASE_URL}/offers/${offerId}/accept`);
             setAcceptedOfferEmail(res.data.email);
             alert(`Offer accepted. Contact the buyer at: ${res.data.email}`);
             fetchOffers(productData.id);
@@ -92,10 +98,19 @@ const Product = () => {
 
     const handleDecline = async (offerId) => {
         try {
-            await axios.post(`http://localhost:4000/offers/${offerId}/decline`);
+            await axios.post(`${BASE_URL}/offers/${offerId}/decline`);
             fetchOffers(productData.id);
         } catch (err) {
             console.error('Failed to decline offer:', err);
+        }
+    };
+
+    const handleCancel = async (offerId) => {
+        try {
+            await axios.delete(`${BASE_URL}/offers/${offerId}`);
+            fetchOffers(productData.id);
+        } catch (err) {
+            console.error('Failed to cancel offer:', err);
         }
     };
 
@@ -131,20 +146,27 @@ const Product = () => {
                     <p className='mt-3 text-3xl font-medium'>{currency}{productData.price}</p>
                     <p className='mt-5 text-gray-600'>{productData.description}</p>
 
-                    {/* Offer Form */}
+                    {/* Offer Submission */}
                     {user?.id !== productData.user_id && (
                         <div className='mt-8'>
                             <h3 className='font-semibold mb-2'>Make an Offer</h3>
-                            <form onSubmit={handleSubmitOffer} className='flex gap-2'>
-                                <input
-                                    type='number'
-                                    value={offerValue}
-                                    onChange={(e) => setOfferValue(e.target.value)}
-                                    className='border px-3 py-1 rounded w-full'
-                                    placeholder='Enter offer amount'
-                                />
-                                <button type='submit' className='bg-blue-600 text-white px-4 py-1 rounded'>Submit</button>
-                            </form>
+
+                            {hasAcceptedOffer ? (
+                                <p className='text-red-600'>
+                                    An offer has already been accepted. You cannot submit new offers.
+                                </p>
+                            ) : (
+                                <form onSubmit={handleSubmitOffer} className='flex gap-2'>
+                                    <input
+                                        type='number'
+                                        value={offerValue}
+                                        onChange={(e) => setOfferValue(e.target.value)}
+                                        className='border px-3 py-1 rounded w-full'
+                                        placeholder='Enter offer amount'
+                                    />
+                                    <button type='submit' className='bg-blue-600 text-white px-4 py-1 rounded'>Submit</button>
+                                </form>
+                            )}
                         </div>
                     )}
 
@@ -157,8 +179,20 @@ const Product = () => {
                                     <li key={offer.id} className='border p-2 rounded flex justify-between items-center'>
                                         <span>
                                             💰 {currency}{Number(offer.amount).toFixed(2)} — from {offer.username}
+                                            {offer.is_accepted && (
+                                                <span className="text-green-600 ml-2 font-semibold">(accepted)</span>
+                                            )}
                                         </span>
-                                        {user?.id === productData.user_id && (
+
+                                        {/* Cancel Button for Sender */}
+                                        {user?.id === offer.sender_id && !offer.is_accepted && (
+                                            <button onClick={() => handleCancel(offer.id)} className="text-yellow-600 font-medium">
+                                                Cancel
+                                            </button>
+                                        )}
+
+                                        {/* Accept/Decline for Seller */}
+                                        {user?.id === productData.user_id && !hasAcceptedOffer && (
                                             <div className='flex gap-2'>
                                                 <button
                                                     onClick={() => handleAccept(offer.id)}
@@ -176,7 +210,7 @@ const Product = () => {
                         </div>
                     )}
 
-                    {/* Accepted Email */}
+                    {/* Accepted Email Notice */}
                     {acceptedOfferEmail && (
                         <div className='mt-4 text-green-700'>
                             You accepted an offer. Contact the buyer at: <strong>{acceptedOfferEmail}</strong>

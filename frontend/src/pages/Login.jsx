@@ -1,6 +1,7 @@
 // --- Login.jsx ---
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../context/ShopContext';
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -9,7 +10,7 @@ const Login = ({ onLogin }) => {
 
     const handleLogin = async () => {
         try {
-            const res = await axios.post('http://localhost:4000/auth/login', { email, password });
+            const res = await axios.post(`${BASE_URL}/auth/login`, { email, password });
             console.log('Logged in user:', res.data.user);
             onLogin(res.data.user);
         } catch (err) {

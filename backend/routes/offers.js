@@ -11,6 +11,15 @@ router.post('/', async (req, res) => {
     }
 
     try {
+        // Check if any offer is already accepted for this product
+        const accepted = await pool.query(
+            'SELECT 1 FROM offers WHERE product_id = $1 AND is_accepted = TRUE LIMIT 1',
+            [product_id]
+        );
+        if (accepted.rowCount > 0) {
+            return res.status(403).json({ error: 'Offer already accepted for this product' });
+        }
+
         const result = await pool.query(
             'INSERT INTO offers (product_id, sender_id, amount) VALUES ($1, $2, $3) RETURNING *',
             [product_id, sender_id, amount]
@@ -21,6 +30,25 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+router.delete('/:offerId', async (req, res) => {
+    const offerId = parseInt(req.params.offerId);
+    if (isNaN(offerId)) return res.status(400).json({ error: 'Invalid offer ID' });
+
+    try {
+        const result = await pool.query('DELETE FROM offers WHERE id = $1 RETURNING *', [offerId]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Offer not found or already deleted' });
+        }
+
+        res.status(200).json({ message: 'Offer cancelled' });
+    } catch (err) {
+        console.error('Error cancelling offer:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 
 // Get all offers for a product (with sender username/email)
 router.get('/:productId', async (req, res) => {

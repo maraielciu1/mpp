@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { ShopContext } from '../context/ShopContext';
+import { ShopContext, BASE_URL } from '../context/ShopContext';
 import Title from '../components/Title';
 import ProductItem from '../components/ProductItem';
 import axios from 'axios';
@@ -21,7 +21,7 @@ const Collection = () => {
             if (sortType === 'low-high') params.sort = 'price_asc';
             else if (sortType === 'high-low') params.sort = 'price_desc';
 
-            const res = await axios.get('http://localhost:4000/products', { params });
+            const res = await axios.get(`${BASE_URL}/products`, { params });
             const allData = res.data.map(p => ({
                 id: p.id,
                 name: p.name,

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../context/ShopContext';
 
 const AdminDashboard = () => {
     const [monitoredUsers, setMonitoredUsers] = useState([]);
     const [logs, setLogs] = useState([]);
-
     useEffect(() => {
         const fetchMonitoredUsers = async () => {
             try {
-                const res = await axios.get('http://localhost:4000/admin/monitored-users?admin=true');
+                const res = await axios.get(`${BASE_URL}/admin/monitored-users?admin=true`);
                 setMonitoredUsers(res.data);
             } catch (err) {
                 console.error('Failed to fetch monitored users', err);
@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
         const fetchLogs = async () => {
             try {
-                const res = await axios.get('http://localhost:4000/admin/logs?admin=true');
+                const res = await axios.get(`${BASE_URL}/admin/logs?admin=true`);
                 setLogs(res.data);
             } catch (err) {
                 console.error('Failed to fetch logs', err);

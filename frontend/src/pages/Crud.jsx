@@ -300,7 +300,7 @@
 
 // export default Crud;
 import React, { useContext, useState, useEffect } from 'react';
-import { ShopContext } from '../context/ShopContext';
+import { ShopContext, BASE_URL } from '../context/ShopContext';
 import toast from 'react-hot-toast';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
