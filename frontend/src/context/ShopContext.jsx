@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const BASE_URL = 'http://localhost:4000';
+export const BASE_URL = 'http://my-mar-Publi-XM77LdYQPgSu-1628198299.eu-central-1.elb.amazonaws.com';
 export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {

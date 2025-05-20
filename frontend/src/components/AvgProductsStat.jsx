@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { RadialBarChart, RadialBar, Legend, Tooltip } from 'recharts';
+import { BASE_URL } from '../context/ShopContext';
 
 const AvgProductsStat = () => {
     const [avg, setAvg] = useState(0);
@@ -8,7 +9,7 @@ const AvgProductsStat = () => {
     useEffect(() => {
         const fetchAvg = async () => {
             try {
-                const res = await axios.get('http://localhost:4000/stats/avg-products-per-user');
+                const res = await axios.get(`${BASE_URL}/stats/avg-products-per-user`);
                 setAvg(Number(res.data.avg_products_per_user));
             } catch (err) {
                 console.error('Failed to fetch stat', err);

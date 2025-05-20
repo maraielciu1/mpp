@@ -3,11 +3,16 @@ import pkg from 'pg';
 const { Pool } = pkg;
 
 const pool = new Pool({
-    user: 'maraielciu',
-    host: 'localhost',
+    user: 'postgres',
+    host: 'marketplace-db-eu.cxcg6c6kc91u.eu-central-1.rds.amazonaws.com',
     database: 'postgres',
+    password: 'Aws23aaa',
     port: 5432,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
+
 
 // const insertProducts = async () => {
 //     const client = await pool.connect();
