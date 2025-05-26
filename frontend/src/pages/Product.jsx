@@ -145,6 +145,11 @@ const Product = () => {
                     <h1 className='text-2xl font-semibold'>{productData.name}</h1>
                     <p className='mt-3 text-3xl font-medium'>{currency}{productData.price}</p>
                     <p className='mt-5 text-gray-600'>{productData.description}</p>
+                    {productData.sizes && productData.sizes.length > 0 && (
+                        <p className='mt-3 text-gray-800'>
+                            <span className='font-medium'>Size:</span> {productData.sizes[0]}
+                        </p>
+                    )}
 
                     {/* Offer Submission */}
                     {user?.id !== productData.user_id && (

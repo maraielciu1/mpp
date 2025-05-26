@@ -34,7 +34,7 @@
 // export default App;
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import Home from './pages/home';
+import Home from './pages/Home';
 import Collection from './pages/Collection';
 import Crud from './pages/Crud';
 import Navbar from './components/Navbar';
@@ -45,6 +45,7 @@ import Orders from './pages/Orders';
 import FileTransfer from './pages/FileTransfer';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
+import Signup from './pages/Signup';
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -57,22 +58,20 @@ const App = () => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('Current user in App:', user);
-    if (!user) navigate('/login');
-  }, [user, navigate]);
-
-  const handleLogin = (user) => {
+  const handleLogin = ({ user, token }) => {
     setUser(user);
     localStorage.setItem('activeUser', JSON.stringify(user));
+    localStorage.setItem('jwtToken', token);
     navigate('/');
   };
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('activeUser');
+    localStorage.removeItem('jwtToken');
     navigate('/login');
   };
+
 
   return (
     <div className='sm: px-[5vw] md:px-[7vw] lg:px-[9vw]'>
@@ -81,6 +80,7 @@ const App = () => {
       {user && <SearchBar />}
       <Routes>
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
         <Route path="/collection" element={user ? <Collection /> : <Navigate to="/login" />} />
         <Route path="/product/:productId" element={user ? <Product /> : <Navigate to="/login" />} />

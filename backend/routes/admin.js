@@ -25,10 +25,12 @@ const monitorUsers = async () => {
 setInterval(monitorUsers, 60 * 1000);
 
 // Admin-only route 
-router.get('/monitored-users', async (req, res) => {
-    const isAdmin = req.query.admin === 'true';
+import { verifyToken } from '../middleware/authMiddleware.js';
 
-    if (!isAdmin) return res.sendStatus(403);
+router.get('/monitored-users', verifyToken, async (req, res) => {
+    if (!req.user?.is_admin) {
+        return res.sendStatus(403); // Forbidden
+    }
 
     try {
         const result = await pool.query(`
@@ -43,17 +45,15 @@ router.get('/monitored-users', async (req, res) => {
     }
 });
 
-router.get('/logs', async (req, res) => {
-    const { admin } = req.query;
-
-    if (admin !== 'true') return res.sendStatus(403);
+router.get('/logs', verifyToken, async (req, res) => {
+    if (!req.user?.is_admin) return res.sendStatus(403);
 
     try {
         const result = await pool.query(`
-        SELECT * FROM logs
-        ORDER BY timestamp DESC
-        LIMIT 200
-      `);
+            SELECT * FROM logs
+            ORDER BY timestamp DESC
+            LIMIT 200
+        `);
         res.json(result.rows);
     } catch (err) {
         console.error('Failed to fetch logs:', err);

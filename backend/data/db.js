@@ -2,15 +2,28 @@ import { faker } from '@faker-js/faker';
 import pkg from 'pg';
 const { Pool } = pkg;
 
+// const pool = new Pool({
+//     user: 'postgres',
+//     host: 'marketplace-db-eu.cxcg6c6kc91u.eu-central-1.rds.amazonaws.com',
+//     database: 'postgres',
+//     password: 'Aws23aaa',
+//     port: 5432,
+//     ssl: {
+//         rejectUnauthorized: false
+//     }
+// });
+
+// const pool = new Pool({
+//     user: 'maraielciu',
+//     host: 'localhost',
+//     database: 'marketplace_db',
+//     password: '',
+//     port: 5432,
+// });
+
 const pool = new Pool({
-    user: 'postgres',
-    host: 'marketplace-db-eu.cxcg6c6kc91u.eu-central-1.rds.amazonaws.com',
-    database: 'postgres',
-    password: 'Aws23aaa',
-    port: 5432,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString: 'postgresql://marketdb_owner:npg_cRLwHQjP7lu9@ep-fragrant-salad-a2a5ho74-pooler.eu-central-1.aws.neon.tech/marketdb?sslmode=require',
+    ssl: { rejectUnauthorized: false }
 });
 
 

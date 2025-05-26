@@ -21,7 +21,7 @@ const BestSeller = () => {
                     Check out our best selling products. Every item is carefully crafted to suit your style.
                 </p>
             </div>
-            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-4 gap-y-6'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 gap-y-6'>
                 {
                     bestProduct.map((item, index) => (
                         <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />

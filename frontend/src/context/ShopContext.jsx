@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const BASE_URL = 'http://my-mar-Publi-XM77LdYQPgSu-1628198299.eu-central-1.elb.amazonaws.com';
+// export const BASE_URL = 'https://d1ot9iirzdrnrh.cloudfront.net';
+export const BASE_URL = 'http://localhost:4000';
 export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {
@@ -9,8 +10,17 @@ const ShopContextProvider = ({ children }) => {
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
     const [status, setStatus] = useState('checking');
+    const [publicProducts, setPublicProducts] = useState([]);
 
-    const user = JSON.parse(localStorage.getItem('activeUser'));
+
+    const [user] = useState(() => {
+        try {
+            const raw = localStorage.getItem('activeUser');
+            return raw && raw !== 'undefined' ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    });
 
     const checkServer = async () => {
         if (!navigator.onLine) return 'offline';
@@ -36,6 +46,23 @@ const ShopContextProvider = ({ children }) => {
         queue.push(operation);
         setQueue(queue);
     };
+
+    useEffect(() => {
+        const interceptor = axios.interceptors.request.use((config) => {
+            const token = localStorage.getItem('jwtToken');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            } else {
+                delete config.headers.Authorization;
+            }
+            return config;
+        });
+
+        return () => {
+            axios.interceptors.request.eject(interceptor);
+        };
+    }, []);
+
 
     const syncQueue = async () => {
         const queue = getQueue();
@@ -88,17 +115,36 @@ const ShopContextProvider = ({ children }) => {
         }
     };
 
+    const fetchPublicProducts = async () => {
+        try {
+            const res = await axios.get(`${BASE_URL}/products`);
+            const normalized = res.data.map(p => ({
+                ...p,
+                subCategory: p.subCategory || p.sub_category || '',
+                image: Array.isArray(p.image) ? p.image : [p.image],
+            }));
+            setPublicProducts(normalized);
+        } catch (err) {
+            console.error('Failed to fetch public products:', err);
+        }
+    };
+
+
     useEffect(() => {
         const updateStatus = async () => {
             const result = await checkServer();
             setStatus(result);
+
             if (result === 'online') {
                 await syncQueue();
-            } else {
-                const cached = JSON.parse(localStorage.getItem(cacheKey) || '[]');
-                setProducts(cached.filter(p => p.user_id === user.id));
             }
+
+            await fetchPublicProducts();
+            if (!user) return;
+            const cached = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+            setProducts(cached.filter(p => p.user_id === user.id));
         };
+
         updateStatus();
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
@@ -107,6 +153,7 @@ const ShopContextProvider = ({ children }) => {
             window.removeEventListener('offline', updateStatus);
         };
     }, []);
+
 
     const addProduct = async (product) => {
         const newProduct = {
